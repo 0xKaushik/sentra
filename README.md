@@ -1,33 +1,45 @@
+# Sentra: Autonomous Network Security Assistant
 
-Sentra is an open-source, AI-augmented internal network auditing tool designed to autonomously discover network hosts, identify vulnerabilities, and generate audit-ready reports. 
+## Overview
+Sentra is an open-source, agentic, and autonomous network security assistant. It discovers network assets, runs reconnaissance (Nmap), correlates vulnerabilities (CVEs), and structures audit-ready reports. Future plans include LLM/agent integration and a GUI.
 
-# Use script.sh to create environment
+## Features
+- Network asset discovery
+- Nmap-based scanning
+- CVE correlation (local/remote)
+- Structured asset inventory
+- CLI interface (GUI coming soon)
 
-```
-sentra/
-├── cli.py
-├── config
-│   └── settings.py
-├── core
-│   ├── analyze.py
-│   ├── engine
-│   │   ├── __init__.py
-│   │   ├── nmap_engine.py
-│   │   └── scanner_engine.py
-│   ├── __init__.py
-│   ├── report.py
-│   └── scan.py
-├── __main__.py
-└── plugins
-    └── __init__.py
+## Installation
+```sh
+# Clone repo
+# Create virtualenv and activate
+python3 -m venv .venv
+source .venv/bin/activate.fish
+pip install -r requirements.txt
 ```
 
-# Run cli.py
+## Usage
+```sh
+python -m sentra.cli.main --target 192.168.1.0/24 --verbose
+```
 
-> Discover self IP address
+## Configuration
+- Copy `.env.example` to `.env` and fill in secrets/API keys as needed.
 
-> Identify CIDR & network range
+## Extending
+- Add new agents in `sentra/core/agents.py`
+- Add new scanners in `sentra/core/scanner.py`
+- Add models in `sentra/core/models.py`
 
-> Automatically starts searching for live hosts
+## Security Best Practices
+- Never commit `.env` or secrets
+- Validate all user input
+- Use subprocess securely (never `shell=True`)
+- Rotate logs and restrict permissions
 
-> Run Nmap scan against live hosts to find active/hidden ports
+## Contributing
+Pull requests welcome! See `CONTRIBUTING.md` for guidelines.
+
+## License
+MIT
