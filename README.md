@@ -1,6 +1,6 @@
 
 Sentra is an open-source, AI-augmented internal network auditing tool designed to autonomously discover network hosts, identify vulnerabilities, and generate audit-ready reports. 
-
+smart first, modular second, and fully offline third.
 # Use script.sh to create environment
 
 ```
@@ -31,3 +31,5 @@ sentra/
 > Automatically starts searching for live hosts
 
 > Run Nmap scan against live hosts to find active/hidden ports
+
+
