@@ -74,25 +74,32 @@ def discover_live_hosts(cidr_block: str) -> List[str]:
         return []
 
 def scan_hosts(hosts: List[str]) -> Dict[str, dict]:
-    """Conduct parallel scans on discovered hosts."""
-    from core.engine.scanner_engine import ScannerEngine  # Lazy import
-    
+    """Conduct parallel scans on discovered hosts using nmap subprocess."""
     results = {}
     random.shuffle(hosts)  # Avoid predictable patterns
-    
+
+    def scan_host(host):
+        try:
+            result = subprocess.run(
+                ["nmap", "-A", host],
+                capture_output=True,
+                text=True,
+                timeout=SCAN_TIMEOUT
+            )
+            return {"output": result.stdout, "error": result.stderr}
+        except subprocess.TimeoutExpired:
+            return {"output": "", "error": f"Scan timed out for {host} after {SCAN_TIMEOUT} seconds."}
+        except Exception as e:
+            return {"output": "", "error": str(e)}
+
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {
-            executor.submit(ScannerEngine(host).run_scan): host 
-            for host in hosts
-        }
-        
+        futures = {executor.submit(scan_host, host): host for host in hosts}
         for future in as_completed(futures):
             host = futures[future]
             try:
                 results[host] = future.result()
             except Exception as e:
                 logger.error(f"Scan failed for {host}: {e}")
-    
     return results
 
 def save_results(results: dict, output_format: str = "json") -> str:
